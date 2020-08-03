@@ -39,6 +39,7 @@ namespace DatingApp.API.Controllers
         // }
 
         // Make First revision async
+        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> GetValues()
         {
