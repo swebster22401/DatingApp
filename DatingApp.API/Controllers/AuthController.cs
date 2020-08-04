@@ -30,6 +30,7 @@ namespace DatingApp.API.Controllers
         //public async Task<IActionResult> Register(string username, string password)
         public async Task<IActionResult> Register(UserForRegisterDto userForRegisterDto)
         {
+            
             // validate request
             //username = username.ToLower();
             userForRegisterDto.Username = userForRegisterDto.Username.ToLower();
@@ -53,36 +54,46 @@ namespace DatingApp.API.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login(UserForLoginDto userForLoginDto)
         {
-            var userFromRepo = await _repo.Login(userForLoginDto.UserName.ToLower(), userForLoginDto.Password);
+            // try
+            // {
+                throw new Exception("Computer says no!");
 
-            if(userFromRepo == null)
-                return Unauthorized();
+                var userFromRepo = await _repo.Login(userForLoginDto.UserName.ToLower(), userForLoginDto.Password);
 
-            var claims = new[]
-            {
-                new Claim(ClaimTypes.NameIdentifier, userFromRepo.Id.ToString()),
-                new Claim(ClaimTypes.Name, userFromRepo.Username)
-            };
+                if(userFromRepo == null)
+                    return Unauthorized();
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8
-                .GetBytes(_config.GetSection("AppSettings:Token").Value));
+                var claims = new[]
+                {
+                    new Claim(ClaimTypes.NameIdentifier, userFromRepo.Id.ToString()),
+                    new Claim(ClaimTypes.Name, userFromRepo.Username)
+                };
 
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
+                var key = new SymmetricSecurityKey(Encoding.UTF8
+                    .GetBytes(_config.GetSection("AppSettings:Token").Value));
 
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.Now.AddDays(1),
-                SigningCredentials = creds
-            };
+                var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
 
-            var tokenHandler = new JwtSecurityTokenHandler();
+                var tokenDescriptor = new SecurityTokenDescriptor
+                {
+                    Subject = new ClaimsIdentity(claims),
+                    Expires = DateTime.Now.AddDays(1),
+                    SigningCredentials = creds
+                };
 
-            var token = tokenHandler.CreateToken(tokenDescriptor);
+                var tokenHandler = new JwtSecurityTokenHandler();
 
-            return Ok(new {
-                token = tokenHandler.WriteToken(token)
+                var token = tokenHandler.CreateToken(tokenDescriptor);
+
+                return Ok(new {
+                    token = tokenHandler.WriteToken(token)
             });
+            // }
+            // catch
+            // {
+            //     return StatusCode(500,"Computer really says no!");
+            // }
+           
         }
     }
 }
