@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "c:\\SampleApps\\DatingApp\\DatingApp.API.csproj": {}
+    "C:\\SampleApps\\DatingApp\\DatingApp.API.csproj": {}
   },
   "projects": {
-    "c:\\SampleApps\\DatingApp\\DatingApp.API.csproj": {
+    "C:\\SampleApps\\DatingApp\\DatingApp.API.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "c:\\SampleApps\\DatingApp\\DatingApp.API.csproj",
+        "projectUniqueName": "C:\\SampleApps\\DatingApp\\DatingApp.API.csproj",
         "projectName": "DatingApp.API",
-        "projectPath": "c:\\SampleApps\\DatingApp\\DatingApp.API.csproj",
+        "projectPath": "C:\\SampleApps\\DatingApp\\DatingApp.API.csproj",
         "packagesPath": "C:\\Users\\webst\\.nuget\\packages\\",
-        "outputPath": "c:\\SampleApps\\DatingApp\\obj\\",
+        "outputPath": "C:\\SampleApps\\DatingApp\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\webst\\AppData\\Roaming\\NuGet\\NuGet.Config",
