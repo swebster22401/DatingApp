@@ -9,17 +9,30 @@
     transform: scale(1.0, 1.0);
     transition-duration: 500ms;
     transition-timing-function: ease-out;
+    max-height: 100px;
+    align-content: center;
+}
+
+.card-img-top {
+    position: relative;
+    display: inline-block;
+    padding: 25px;
+    align-content: right;
+    /* background-color: purple; */
 }
 
 .card-img-wrapper {
     overflow: hidden;
     position: relative;
+    align-content: center;
+    padding: 10px;
+    /* background-color: blue; */
 }
 
 .member-icons {
     position: absolute;
     bottom: -30%;
-    left: 0;
+    left: 0; 
     right: 0;
     margin-right: auto;
     margin-left: auto;
@@ -33,4 +46,14 @@
 
 .animate {
     transition: all 0.3s ease-in-out;
+}
+
+button {
+    width: 25px;
+    height: 25px;
+}
+
+.fa {
+    width: 10px;
+    height: 10px; 
 }

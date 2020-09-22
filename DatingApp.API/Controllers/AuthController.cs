@@ -3,6 +3,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
 using DatingApp.API.Data;
 using DatingApp.API.Dtos;
 using DatingApp.API.Models;
@@ -16,12 +17,15 @@ namespace DatingApp.API.Controllers
 {
     [Microsoft.AspNetCore.Mvc.Route("api/[controller]")]
     [ApiController]
-    public class AuthController: ControllerBase
+    public class AuthController : ControllerBase
     {
         private readonly IAuthRepository _repo;
         private readonly IConfiguration _config;
-        public AuthController(IAuthRepository repo, IConfiguration config)
+        private readonly IMapper _mapper;
+
+        public AuthController(IAuthRepository repo, IConfiguration config, IMapper mapper)
         {
+            _mapper = mapper;
             _repo = repo;
             _config = config;
         }
@@ -30,11 +34,11 @@ namespace DatingApp.API.Controllers
         //public async Task<IActionResult> Register(string username, string password)
         public async Task<IActionResult> Register(UserForRegisterDto userForRegisterDto)
         {
-            
+
             // validate request
             //username = username.ToLower();
             userForRegisterDto.Username = userForRegisterDto.Username.ToLower();
-           //userForRegisterDto.Password = 
+            //userForRegisterDto.Password = 
 
             //if (await _repo.UserExists(username))
             if (await _repo.UserExists(userForRegisterDto.Username))
@@ -56,44 +60,48 @@ namespace DatingApp.API.Controllers
         {
             // try
             // {
-                //throw new Exception("Computer says no!");
+            //throw new Exception("Computer says no!");
 
-                var userFromRepo = await _repo.Login(userForLoginDto.UserName.ToLower(), userForLoginDto.Password);
+            var userFromRepo = await _repo.Login(userForLoginDto.UserName.ToLower(), userForLoginDto.Password);
 
-                if(userFromRepo == null)
-                    return Unauthorized();
+            if (userFromRepo == null)
+                return Unauthorized();
 
-                var claims = new[]
-                {
+            var claims = new[]
+            {
                     new Claim(ClaimTypes.NameIdentifier, userFromRepo.Id.ToString()),
                     new Claim(ClaimTypes.Name, userFromRepo.Username)
                 };
 
-                var key = new SymmetricSecurityKey(Encoding.UTF8
-                    .GetBytes(_config.GetSection("AppSettings:Token").Value));
+            var key = new SymmetricSecurityKey(Encoding.UTF8
+                .GetBytes(_config.GetSection("AppSettings:Token").Value));
 
-                var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
 
-                var tokenDescriptor = new SecurityTokenDescriptor
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(claims),
+                Expires = DateTime.Now.AddDays(1),
+                SigningCredentials = creds
+            };
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+
+            var user = _mapper.Map<UserForListDto>(userFromRepo);
+
+                return Ok(new
                 {
-                    Subject = new ClaimsIdentity(claims),
-                    Expires = DateTime.Now.AddDays(1),
-                    SigningCredentials = creds
-                };
-
-                var tokenHandler = new JwtSecurityTokenHandler();
-
-                var token = tokenHandler.CreateToken(tokenDescriptor);
-
-                return Ok(new {
-                    token = tokenHandler.WriteToken(token)
-            });
+                    token = tokenHandler.WriteToken(token),
+                    user
+                });
             // }
             // catch
             // {
             //     return StatusCode(500,"Computer really says no!");
             // }
-           
+
         }
     }
 }
