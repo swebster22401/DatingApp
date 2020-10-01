@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace DatingApp.API.Migrations
 {
-    public partial class Photos : Migration
+    public partial class PhotosAndLikes : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -61,7 +61,31 @@ namespace DatingApp.API.Migrations
                 nullable: true);
 
             migrationBuilder.CreateTable(
-                name: "Photo",
+                name: "Likes",
+                columns: table => new
+                {
+                    LikerId = table.Column<int>(nullable: false),
+                    LikeeId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Likes", x => new { x.LikerId, x.LikeeId });
+                    table.ForeignKey(
+                        name: "FK_Likes_Users_LikeeId",
+                        column: x => x.LikeeId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Likes_Users_LikerId",
+                        column: x => x.LikerId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Photos",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
@@ -75,9 +99,9 @@ namespace DatingApp.API.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Photo", x => x.Id);
+                    table.PrimaryKey("PK_Photos", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Photo_Users_UserId",
+                        name: "FK_Photos_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
@@ -85,15 +109,23 @@ namespace DatingApp.API.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Photo_UserId",
-                table: "Photo",
+                name: "IX_Likes_LikeeId",
+                table: "Likes",
+                column: "LikeeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Photos_UserId",
+                table: "Photos",
                 column: "UserId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Photo");
+                name: "Likes");
+
+            migrationBuilder.DropTable(
+                name: "Photos");
 
             migrationBuilder.DropColumn(
                 name: "City",
